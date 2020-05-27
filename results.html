@@ -1,0 +1,222 @@
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-99715444-5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-99715444-5');
+    </script>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:400,700" rel="stylesheet">
+    <link href='style.css' rel='stylesheet' type='text/css'>
+    <title>AltValues Results</title>
+    <link rel="icon" type="x-icon" href="icon.png">
+    <link rel="shortcut icon" type="x-icon" href="icon.png">
+    <meta charset="utf-8">
+
+    <script type="application/javascript" src="ideologies.js"></script>
+    <script type="application/javascript" src="results_dat.js"></script>
+
+</head>
+
+<body>
+    <h1>AltValues</h1>
+    <hr>
+
+    <h1>Results</h1>
+
+    <!-- HACK TO GET IMAGES PROPERLY WORK ON CANVAS -->
+    <img id="img-individual" src="value_images/individual.svg" height="200%" style="display: none;"/>
+    <img id="img-market" src="value_images/market.svg" height="128pt" style="display: none;"/>
+    <img id="img-essentialist" src="value_images/essentialist.svg" height="128pt" style="display: none;"/>
+    <img id="img-pragmatic" src="value_images/pragmatic.svg" height="128pt" style="display: none;"/>
+    <img id="img-universal" src="value_images/universal.svg" height="128pt" style="display: none;"/>
+    <img id="img-ecological" src="value_images/ecological.svg" height="128pt" style="display: none;"/>
+    <img id="img-politicized" src="value_images/politicized.svg" height="128pt" style="display: none;"/>
+    <img id="img-religious" src="value_images/religious.svg" height="128pt" style="display: none;"/>
+    <img id="img-futurist" src="value_images/futurist.svg" height="128pt" style="display: none;"/>
+
+    <img id="img-collective" src="value_images/collective.svg" height="128pt" style="display: none;"/>
+    <img id="img-planned" src="value_images/planned.svg" height="128pt" style="display: none;"/>
+    <img id="img-constructivist" src="value_images/constructivist.svg" height="128pt" style="display: none;"/>
+    <img id="img-idealist" src="value_images/idealist.svg" height="128pt" style="display: none;"/>
+    <img id="img-particular" src="value_images/particular.svg" height="128pt" style="display: none;"/>
+    <img id="img-industrial" src="value_images/industrial.svg" height="128pt" style="display: none;"/>
+    <img id="img-apolitical" src="value_images/apolitical.svg" height="128pt" style="display: none;"/>
+    <img id="img-secular" src="value_images/secular.svg" height="128pt" style="display: none;"/>
+    <img id="img-historic" src="value_images/historic.svg" height="128pt" style="display: none;"/>
+
+
+    <p>Disclaimer: Proper data collection features were added with v1.0.0 and ideological assumptions can't be made before there's enough data.</p>
+    <h2>Closest Match: <span class="weight-300" id="ideology-label"></span></h2>
+    <h3>Description: <span class="weight-300" id="ideodesc-label"></span></h3>
+    <!--<h3>Theory: <span class="weight-300" id="theory-label"></span></h3>-->
+
+
+
+    <canvas id="banner" width=800 height=1250  style="font-family:Montserrat"></canvas>
+    <button class="button" onclick="location.href='index.html';" style="background-color: #2196f3;">Back</button> <br>
+    <hr/>
+    <p style="text-align: center">You can contact us at <a href="mailto:altvalues8@gmail.com">altvalues8@gmail.com</a> or join our <a href="https://discord.gg/vwqk2UZ">Discord</a>.</p>
+
+
+
+    <!-- JavaScript for the test itself -->
+    <script>
+    version = "ver 1.0.0"
+    function getQueryVariable(variable) {
+           var query = window.location.search.substring(1)
+           var vars = query.split("&")
+           for (var i=0;i<vars.length;i++) {
+                   var pair = vars[i].split("=")
+                   if(pair[0] == variable) {return pair[1]}
+           }
+           return(NaN);
+    }
+
+    function setBarValue(name, value) {
+        innerel = document.getElementById(name)
+        outerel = document.getElementById("bar-" + name)
+        outerel.style.width = (value + "%")
+        innerel.innerHTML = (value + "%")
+        if (innerel.offsetWidth + 15 > outerel.offsetWidth) {
+            innerel.style.visibility = "hidden"
+        }
+    }
+
+    function setLabel(val,ary) {
+      return ary[Math.min(parseInt(val/100*ary.length), ary.length-1)]
+    }
+
+    // GET VALUES
+    individual      = getQueryVariable("social")
+    market          = getQueryVariable("econ")
+    essentialist    = getQueryVariable("essence")
+    pragmatic       = getQueryVariable("moral")
+    universal       = getQueryVariable("apply")
+    ecological      = getQueryVariable("ecol")
+    politicized     = getQueryVariable("socpol")
+    religious       = getQueryVariable("relig")
+    futurist        = getQueryVariable("aesth")
+    collective      = (100 - individual     ).toFixed(1)
+    planned         = (100 - market         ).toFixed(1)
+    constructivist  = (100 - essentialist   ).toFixed(1)
+    idealist        = (100 - pragmatic      ).toFixed(1)
+    particular      = (100 - universal      ).toFixed(1)
+    industrial      = (100 - ecological     ).toFixed(1)
+    apolitical      = (100 - politicized    ).toFixed(1)
+    secular         = (100 - religious      ).toFixed(1)
+    historic        = (100 - futurist       ).toFixed(1)
+
+    ideology = ""
+    ideodesc = ""
+    theory = ""
+    ideodist = Infinity
+    for (var i = 0; i < ideologies.length; i++) {
+        dist = 0
+        dist += Math.pow(Math.abs(ideologies[i].stats.social - individual), 2)
+        dist += Math.pow(Math.abs(ideologies[i].stats.econ - market), 2)
+        dist += Math.pow(Math.abs(ideologies[i].stats.essence - essentialist), 2)
+        dist += Math.pow(Math.abs(ideologies[i].stats.moral - pragmatic), 2)
+        dist += Math.pow(Math.abs(ideologies[i].stats.apply - universal), 2)
+        dist += Math.pow(Math.abs(ideologies[i].stats.ecol - ecological), 2)
+        dist += Math.pow(Math.abs(ideologies[i].stats.socpol - politicized), 2)
+        dist += Math.pow(Math.abs(ideologies[i].stats.relig - religious), 2)
+        dist += Math.pow(Math.abs(ideologies[i].stats.aesth - futurist), 2)
+        if (dist < ideodist) {
+            ideology = ideologies[i].name
+            ideodesc = ideologies[i].desc
+            theory = ideologies[i].theory
+            ideodist = dist
+        }
+    }
+    document.getElementById("ideology-label").innerHTML = ideology
+    document.getElementById("ideodesc-label").innerHTML = ideodesc
+    //document.getElementById("theory-label").innerHTML = theory
+
+    window.onload = function() {
+        var c = document.getElementById("banner")
+        var ctx = c.getContext("2d")
+        ctx.fillStyle = "#EEEEEE"
+        ctx.fillRect(0,0,800,1250)
+
+
+
+        //LOGOS ON THE IMAGE
+
+        var starting_height = 170;
+        for(let i = 0; i < values.left.length; i++){
+            img = document.getElementById("img-"+values.left[i]);
+            ctx.drawImage(img, 20, starting_height, 100, 100);
+            starting_height += 120
+        };
+
+        var starting_height = 170;
+        for(let i = 0; i < values.right.length; i++){
+            img = document.getElementById("img-"+values.right[i]);
+            ctx.drawImage(img, 680, starting_height, 100, 100);
+            starting_height += 120
+        };
+
+
+        ctx.fillStyle="#222222"
+
+        var starting_height = 180;
+        for(let i = 0; i < values.left.length; i++){
+            ctx.fillRect(120, starting_height, 560, 80)
+            starting_height += 120
+        }
+
+        //color fill
+        var starting_height = 184;
+
+        for(let i = 0; i < values.left.length; i++){
+            ctx.fillStyle=valueColors[values.left[i]]
+            ctx.fillRect(120, starting_height, 5.6*eval(values.left[i])-2, 72)
+            starting_height += 120
+        }
+
+        var starting_height = 184;
+
+        for(let i = 0; i < values.right.length; i++){
+            ctx.fillStyle=valueColors[values.right[i]]
+            ctx.fillRect(682-5.6*eval(values.right[i]), starting_height, 5.6*eval(values.right[i])-2, 72)
+            starting_height += 120
+        }
+
+
+        ctx.fillStyle="#222222"
+        ctx.font="700 80px Montserrat"
+        ctx.textAlign="left"
+        ctx.fillText("AltValues", 20, 90)
+        ctx.font="50px Montserrat"
+        ctx.fillText(ideology, 20, 140)
+
+        var starting_height = 237.5;
+        ctx.textAlign="left"
+        for(let i = 0; i < values.left.length; i++){
+            if (eval(values.left[i])  > 27) {ctx.fillText(eval(values.left[i]) + "%", 130, starting_height)}
+            starting_height += 120
+        }
+
+        var starting_height = 237.5;
+        ctx.textAlign="right"
+        for(let i = 0; i < values.right.length; i++){
+            if (eval(values.right[i])  > 27) {ctx.fillText(eval(values.right[i]) + "%", 670, starting_height)}
+            starting_height += 120
+        }
+
+        ctx.font="300 30px Montserrat"
+        ctx.fillText("altvalues.github.io", 780, 60)
+        ctx.fillText(version, 780, 90)
+        ctx.textAlign="center"
+
+        var starting_height = 175;
+        for(let i = 0; i < values.left.length; i++){
+            ctx.fillText(axisNames[labels[i]]+": " + setLabel(eval(values.left[i]), axisArrays[labels[i]]), 400, starting_height)
+            starting_height += 120
+        }
+    }
+    </script>
+</body>
