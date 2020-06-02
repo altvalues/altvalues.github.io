@@ -249,16 +249,15 @@
             data: JSON.stringify({"test": 603981, "version":"1.0", "data": { "answers": testAnswers, "percents": pct, "extras": extra}}),
             success: function(data){
                 console.log("Successfully sent request");
+                Cookies.set('taken', true, { expires: new Date(new Date().getTime() + 10 * 60 * 1000), sameSite: 'strict' })
+                location.href = `results.html?`+ window.location.search.substring(1)
             },
             error: function(){
                 console.log("Sending request failed");
-            }})
-            .done(function(){
-                console.log("Done!");
                 Cookies.set('taken', true, { expires: new Date(new Date().getTime() + 10 * 60 * 1000), sameSite: 'strict' })
                 location.href = `results.html?`+ window.location.search.substring(1)
             }
-        );
+        });
     }
 
     function pass(serious) {
