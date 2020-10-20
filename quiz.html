@@ -147,7 +147,7 @@
             }
         }
 
-        location.href = `feedback.html` + args
+        location.href = ((window.location.hostname == "localhost") ? `feedback.html` : `results.html`) + args
 
     }
 
