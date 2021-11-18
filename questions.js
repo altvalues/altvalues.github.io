@@ -287,7 +287,7 @@ questions = [
 
     {
         "id": 39,
-        "question": "There should be political youth organizations (like Komsomol) to instill the youth our values.",
+        "question": "There should be political youth organizations (like Komsomol) to instill our values in the youth",
         "effects": {
             "socpol": 1
         }
